@@ -1,0 +1,57 @@
+version: "2"
+
+run:
+  # The default timeout is 1m, which can be too short for larger projects or CI environments.
+  timeout: 5m
+  # Exit with code 1 on errors, 0 on success. Matches your pipeline needs.
+  issues-exit-code: 1
+  # Include test files in the linting process.
+  tests: true
+
+formatters:
+  enable:
+    - gofumpt       # A stricter, more standard formatter than gofmt.
+  settings:
+    gofumpt:
+      # Choose whether to use the extra rules that gofumpt provides.
+      extra-rules: true
+
+linters:
+  enable:
+    - copyloopvar
+    - decorder
+    # - depguard
+    - errcheck
+    - errorlint
+    - exhaustive
+    # - gocritic
+    - gosec
+    - govet
+    - misspell
+    # - nolintlint
+    # - predeclared
+    # - reassign
+    # - revive
+    # - staticcheck
+    # - testifylint
+    # - thelper
+    # - unconvert
+    # - unparam
+    # - unused
+    # - usestdlibvars
+    # - usetesting
+    # - wastedassign
+    # - whitespace
+  exclusions:
+    paths:
+      - third_party
+  
+  settings:
+    gosec:
+      # Exclude certain rules if they become too noisy (e.g., G104 for unhandled errors, since errcheck handles that).
+      excludes:
+        - G115
+        - G402
+        - G404
+        - G104
+        - G304
