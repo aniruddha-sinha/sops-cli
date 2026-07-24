@@ -32,7 +32,7 @@ func NewSopsCLICommand() *cobra.Command {
 	// preventing disk writes during simple tasks like 'sops-cli --help'
 	cobra.OnInitialize(func() {})
 
-	cmd.AddCommand()
+	cmd.AddCommand(newEncryptCmd())
 
 	cmd.SetOut(os.Stdout)
 	cmd.SetErr(os.Stderr)
