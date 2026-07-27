@@ -43,9 +43,9 @@ func newEncryptCmd() *cobra.Command {
 				if err := encAPI.Save(encryptionOut); err != nil {
 					return err
 				}
+			} else {
+				fmt.Println(encryptionOut)
 			}
-
-			fmt.Println(encryptionOut)
 			return nil
 		},
 	}
@@ -55,8 +55,7 @@ func newEncryptCmd() *cobra.Command {
 	cmd.Flags().StringVar(&keyDetail, "key", "", "key detail: AWS KMS ARN, GCP KMS RESOURCE ID, PGP FINGERPRINT")
 	cmd.Flags().StringVar(&inputFilePath, "in", "", "Input file path to encrypt")
 	cmd.Flags().StringVar(&outputFilePath, "out", "", "Output file (defaults to stdout)")
-
-	// enforce required flags
+	
 	for _, flag := range []string{"key-type", "key", "in"} {
 		if err := cmd.MarkFlagRequired(flag); err != nil {
 			panic(err)

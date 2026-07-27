@@ -60,16 +60,7 @@ func (es *EncryptSpec) Encrypt() (string, error) {
 		return "", err
 	}
 
-	tree := sops.Tree{
-		Branches: branches,
-		Metadata: sops.Metadata{
-			KeyGroups: []sops.KeyGroup{
-				[]keys.MasterKey{masterKey},
-			},
-			UnencryptedSuffix: "_unencrypted",
-		},
-	}
-
+	tree := getSopsTree(branches, masterKey)
 	dataKey, errs := tree.GenerateDataKeyWithKeyServices(
 		[]keyservice.KeyServiceClient{keyservice.NewLocalClient()},
 	)
@@ -82,6 +73,7 @@ func (es *EncryptSpec) Encrypt() (string, error) {
 		Tree:    &tree,
 		Cipher:  aes.NewCipher(),
 	})
+	
 	if err != nil {
 		return "", fmt.Errorf("failed to encrypt tree: %w", err)
 	}
@@ -100,6 +92,18 @@ func (es *EncryptSpec) Save(data string) error {
 	}
 
 	return nil
+}
+
+func getSopsTree(branches sops.TreeBranches, masterKey keys.MasterKey) sops.Tree {
+	return sops.Tree{
+		Branches: branches,
+		Metadata: sops.Metadata{
+			KeyGroups: []sops.KeyGroup{
+				[]keys.MasterKey{masterKey},
+			},
+			UnencryptedSuffix: "_unencrypted",
+		},
+	}
 }
 
 func sopsStoreSelector(format string) (sops.Store, error) {
