@@ -73,7 +73,6 @@ func (es *EncryptSpec) Encrypt() (string, error) {
 		Tree:    &tree,
 		Cipher:  aes.NewCipher(),
 	})
-	
 	if err != nil {
 		return "", fmt.Errorf("failed to encrypt tree: %w", err)
 	}
