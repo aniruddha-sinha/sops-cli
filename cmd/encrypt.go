@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/aniruddha-sinha/sops-cli/internal/sops"
 	"github.com/spf13/cobra"
 )
 
@@ -32,6 +33,19 @@ func newEncryptCmd() *cobra.Command {
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var encAPI sops.EncryptionAPI = sops.NewEncryptSpec(inputFilePath, outputFilePath, inFileFormat, keyType, keyDetail)
+			encryptionOut, err := encAPI.Encrypt()
+			if err != nil {
+				return err
+			}
+
+			if outputFilePath != "" {
+				if err := encAPI.Save(encryptionOut); err != nil {
+					return err
+				}
+			}
+
+			fmt.Println(encryptionOut)
 			return nil
 		},
 	}
