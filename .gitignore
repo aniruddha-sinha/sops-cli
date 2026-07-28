@@ -15,6 +15,7 @@ bin/
 *.test
 *.out
 test-coverage/
+example/
 
 # =========================
 # Go Workspace
