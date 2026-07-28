@@ -13,7 +13,7 @@ func newEncryptCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "encrypt",
 		Aliases: []string{"e"},
-		Short:   "encrypt JSON/YAML/BIN secrets with masterkey provider as AWSKMS, GCPKMS, PGP",
+		Short:   "encrypt JSON/YAML/BIN secrets with masterkey provider as AWSKMS, PGP",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			inputFileFormat := strings.ToLower(inFileFormat)
 			switch inputFileFormat {
@@ -25,9 +25,9 @@ func newEncryptCmd() *cobra.Command {
 
 			kType := strings.ToLower(keyType)
 			switch kType {
-			case "awskms", "gcpkms", "pgp":
+			case "awskms", "pgp":
 			default:
-				return fmt.Errorf("invalid key type %s, must be one of awskms gcpkms pgp ", inputFileFormat)
+				return fmt.Errorf("invalid key type %s, must be one of awskms, pgp ", inputFileFormat)
 			}
 
 			return nil
@@ -51,8 +51,8 @@ func newEncryptCmd() *cobra.Command {
 	}
 
 	cmd.Flags().StringVar(&inFileFormat, "format", "json", "File Format : JSON/YAML/BIN")
-	cmd.Flags().StringVar(&keyType, "key-type", "", "Key Type: awskms, gcpkms, pgp")
-	cmd.Flags().StringVar(&keyDetail, "key", "", "key detail: AWS KMS ARN, GCP KMS RESOURCE ID, PGP FINGERPRINT")
+	cmd.Flags().StringVar(&keyType, "key-type", "", "Key Type: awskms, pgp")
+	cmd.Flags().StringVar(&keyDetail, "key", "", "key detail: AWS KMS ARN, PGP FINGERPRINT")
 	cmd.Flags().StringVar(&inputFilePath, "in", "", "Input file path to encrypt")
 	cmd.Flags().StringVar(&outputFilePath, "out", "", "Output file (defaults to stdout)")
 

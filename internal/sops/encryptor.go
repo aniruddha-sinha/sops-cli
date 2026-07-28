@@ -8,7 +8,6 @@ import (
 	"github.com/getsops/sops/v3"
 	"github.com/getsops/sops/v3/aes"
 	"github.com/getsops/sops/v3/cmd/sops/common"
-	"github.com/getsops/sops/v3/gcpkms"
 	"github.com/getsops/sops/v3/keys"
 	"github.com/getsops/sops/v3/keyservice"
 	"github.com/getsops/sops/v3/kms"
@@ -128,8 +127,6 @@ func getProviderWideMasterKey(keyType, keyDetail string) (keys.MasterKey, error)
 		masterKey = pgp.NewMasterKeyFromFingerprint(keyDetail)
 	case "awskms":
 		masterKey = kms.NewMasterKey(keyDetail, "", nil)
-	case "gcpkms":
-		masterKey = gcpkms.NewMasterKeyFromResourceID(keyDetail)
 	default:
 		return nil, fmt.Errorf("unsupported key type %s", keyType)
 	}
