@@ -66,17 +66,42 @@ func newEncryptCmd() *cobra.Command {
 }
 
 func newDecryptCmd() *cobra.Command {
+	var decryptFormat, encryptIn, decryptOut string
 	cmd := &cobra.Command{
 		Use:     "decrypt",
 		Aliases: []string{"d"},
-		Short:   "decrypt encrypted JSON secrets into JSON/YAML/BINARY using PGP or AWSKMS Masterkey",
+		Short:   "decrypt encrypted JSON secrets into JSON/YAML/BINARY using PGP or AWSKMS Masterkey which can be read from encrypted metadata",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
+			dFormat := strings.ToLower(decryptFormat)
+			switch dFormat {
+			case "json", "yaml", "binary":
+			default:
+				return fmt.Errorf("invalid output file format %s, must be one of json yaml binary ", decryptFormat)
+			}
+
 			return nil
 		},
 		RunE: func(cmd *cobra.Command, args []string) error {
+			var decAPI sops.DecryptionAPI = sops.NewDecryptSpec(decryptFormat, encryptIn, decryptOut)
+			plainOut, err := decAPI.Decrypt()
+			if err != nil {
+				return err
+			}
+
+			if decryptOut != "" {
+				if err := decAPI.Save(plainOut); err != nil {
+					return err
+				}
+			} else {
+				fmt.Println(plainOut)
+			}
+
 			return nil
 		},
 	}
 
+	cmd.Flags().StringVar(&decryptFormat, "output-format", "", "the format in which the decrypted file needs to be created")
+	cmd.Flags().StringVar(&encryptIn, "input-file-path", "", "the input (encrypted) file path")
+	cmd.Flags().StringVar(&decryptOut, "output-file-path", "", "the output file path which is plain text; defaults to stdout")
 	return cmd
 }
