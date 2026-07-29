@@ -12,8 +12,6 @@ import (
 	"github.com/getsops/sops/v3/keyservice"
 	"github.com/getsops/sops/v3/kms"
 	"github.com/getsops/sops/v3/pgp"
-	sopsstorejson "github.com/getsops/sops/v3/stores/json"
-	sopsstoreyaml "github.com/getsops/sops/v3/stores/yaml"
 )
 
 type EncryptionAPI interface {
@@ -102,22 +100,6 @@ func getSopsTree(branches sops.TreeBranches, masterKey keys.MasterKey) sops.Tree
 			UnencryptedSuffix: "_unencrypted",
 		},
 	}
-}
-
-func sopsStoreSelector(format string) (sops.Store, error) {
-	var store sops.Store
-	switch strings.ToLower(format) {
-	case "json":
-		store = &sopsstorejson.Store{}
-	case "yaml":
-		store = &sopsstoreyaml.Store{}
-	case "binary":
-		store = &sopsstorejson.BinaryStore{}
-	default:
-		return nil, fmt.Errorf("unsupported format %s must be json, yaml or binary ", format)
-	}
-
-	return store, nil
 }
 
 func getProviderWideMasterKey(keyType, keyDetail string) (keys.MasterKey, error) {
