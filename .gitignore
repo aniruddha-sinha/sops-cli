@@ -15,8 +15,7 @@ bin/
 *.test
 *.out
 test-coverage/
-example/
-example-aws-kms/
+example-aws-kms-test/
 
 # =========================
 # Go Workspace
