@@ -64,3 +64,19 @@ func newEncryptCmd() *cobra.Command {
 
 	return cmd
 }
+
+func newDecryptCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "decrypt",
+		Aliases: []string{"d"},
+		Short:   "decrypt encrypted JSON secrets into JSON/YAML/BINARY using PGP or AWSKMS Masterkey",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return nil
+		},
+	}
+
+	return cmd
+}
