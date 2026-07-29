@@ -56,7 +56,7 @@ func newEncryptCmd() *cobra.Command {
 	cmd.Flags().StringVar(&inputFilePath, "in", "", "Input file path to encrypt")
 	cmd.Flags().StringVar(&outputFilePath, "out", "", "Output file (defaults to stdout)")
 
-	for _, flag := range []string{"key-type", "key", "in"} {
+	for _, flag := range []string{"key-type", "key", "in", "format"} {
 		if err := cmd.MarkFlagRequired(flag); err != nil {
 			panic(err)
 		}
@@ -102,6 +102,11 @@ func newDecryptCmd() *cobra.Command {
 
 	cmd.Flags().StringVar(&decryptFormat, "output-format", "", "the format in which the decrypted file needs to be created")
 	cmd.Flags().StringVar(&encryptIn, "input-file-path", "", "the input (encrypted) file path")
-	cmd.Flags().StringVar(&decryptOut, "output-file-path", "", "the output file path which is plain text; defaults to stdout")
+	cmd.Flags().StringVar(&decryptOut, "output-file-path", "", "the output file path which is plain text; (defaults to stdout")
+	for _, flag := range []string{"output-format", "input-file-path"} {
+		if err := cmd.MarkFlagRequired(flag); err != nil {
+			panic(err)
+		}
+	}
 	return cmd
 }
