@@ -47,7 +47,7 @@ func (ds *DecryptSpec) Decrypt() (string, error) {
 	keyServiceClient := keyservice.NewLocalClient()
 	dataKey, err := tree.Metadata.GetDataKeyWithKeyServices([]keyservice.KeyServiceClient{keyServiceClient}, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to get data key (ensure your AWS/PGP credentials are active): %w", err)
+		return "", fmt.Errorf("failed to get data key : %w", err)
 	}
 
 	cipher := aes.NewCipher()
