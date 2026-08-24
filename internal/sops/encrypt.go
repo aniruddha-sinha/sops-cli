@@ -50,7 +50,11 @@ func Encrypt(inFile, format, keyType, keySpec string) (string, error) {
 }
 
 func Save(outFile, data string) error {
-	return os.WriteFile(outFile, []byte(data), 0o600)
+	if err := os.WriteFile(outFile, []byte(data), 0o600); err != nil {
+		return err
+	}
+
+	return os.Chmod(outFile, 0o600)
 }
 
 func encryptAndEmit(format string, dataKey []byte, tree sops.Tree) ([]byte, error) {
