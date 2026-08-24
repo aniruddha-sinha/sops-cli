@@ -25,7 +25,7 @@ func Encrypt(inFile, format, keyType, keySpec string) (string, error) {
 		return "", fmt.Errorf("%w, %w", ErrInFileReadError, err)
 	}
 
-	branches, err := loadPlainFile(payload, format)
+	store, branches, err := loadPlainFile(payload, format)
 	if err != nil {
 		return "", err
 	}
@@ -41,7 +41,7 @@ func Encrypt(inFile, format, keyType, keySpec string) (string, error) {
 		return "", fmt.Errorf("%w:%w", ErrGenDataKey, err)
 	}
 
-	result, err := encryptAndEmit(format, dataKey, tree)
+	result, err := encryptAndEmit(store, dataKey, tree)
 	if err != nil {
 		return "", err
 	}
@@ -57,7 +57,7 @@ func Save(outFile, data string) error {
 	return os.Chmod(outFile, 0o600)
 }
 
-func encryptAndEmit(format string, dataKey []byte, tree sops.Tree) ([]byte, error) {
+func encryptAndEmit(store sops.Store, dataKey []byte, tree sops.Tree) ([]byte, error) {
 	if err := common.EncryptTree(common.EncryptTreeOpts{
 		DataKey: dataKey,
 		Tree:    &tree,
@@ -66,17 +66,12 @@ func encryptAndEmit(format string, dataKey []byte, tree sops.Tree) ([]byte, erro
 		return nil, fmt.Errorf("%w:%w", ErrEncryptingTree, err)
 	}
 
-	sopsStore, err := ValidateFormatAndGetStore(format)
-	if err != nil {
-		return nil, err
-	}
-
-	result, err := sopsStore.EmitEncryptedFile(tree)
+	result, err := store.EmitEncryptedFile(tree)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %w", ErrFormattingEncryptedOutput, err)
 	}
 
-	return result, err
+	return result, nil
 }
 
 func generateDataKey(tree *sops.Tree) ([]byte, error) {
@@ -91,27 +86,18 @@ func generateDataKey(tree *sops.Tree) ([]byte, error) {
 	return dataKey, nil
 }
 
-func getSopsStore(format string) (sops.Store, error) {
+func loadPlainFile(payload []byte, format string) (sops.Store, sops.TreeBranches, error) {
 	sopsStore, err := ValidateFormatAndGetStore(format)
 	if err != nil {
-		return nil, err
-	}
-
-	return sopsStore, nil
-}
-
-func loadPlainFile(payload []byte, format string) (sops.TreeBranches, error) {
-	sopsStore, err := getSopsStore(format)
-	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	branches, err := sopsStore.LoadPlainFile(payload)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return branches, nil
+	return sopsStore, branches, nil
 }
 
 func getSopsEncryptionTree(branches sops.TreeBranches, masterKeys []keys.MasterKey) sops.Tree {
