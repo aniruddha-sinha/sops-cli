@@ -53,7 +53,7 @@ func newEncryptCmd() *cobra.Command {
 	cmd.Flags().StringVar(&inFile, "in", "", "Input file path to encrypt")
 	cmd.Flags().StringVar(&outFile, "out", "", "Output file (defaults to stdout)")
 
-	for _, flag := range []string{"key-type", "key", "in", "format"} {
+	for _, flag := range []string{"key-type", "key", "in"} {
 		if err := cmd.MarkFlagRequired(flag); err != nil {
 			return nil
 		}
