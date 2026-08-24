@@ -31,7 +31,6 @@ func NewSopsCLICommand() *cobra.Command {
 
 	cmd.AddCommand(
 		newEncryptCmd(),
-		newDecryptCmd(),
 	)
 
 	cmd.SetOut(os.Stdout)
