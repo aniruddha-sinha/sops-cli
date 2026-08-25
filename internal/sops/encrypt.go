@@ -20,7 +20,7 @@ var (
 )
 
 func Encrypt(inFile, format, keyType, keySpec string) (string, error) {
-	payload, err := os.ReadFile(inFile)
+	payload, err := os.ReadFile(inFile) //nolint:gosec // G304: File path is intended to be dynamically passed via CLI input variable
 	if err != nil {
 		return "", fmt.Errorf("%w, %w", ErrInFileReadError, err)
 	}

@@ -8,14 +8,16 @@ run:
   # Include test files in the linting process.
   tests: true
 
+# 1. Formatters have a dedicated layout section in version "2"
 formatters:
   enable:
-    - gofumpt       # A stricter, more standard formatter than gofmt.
+    - gofumpt        # Managed here as a native formatting tool instead of a linter
   settings:
     gofumpt:
-      # Choose whether to use the extra rules that gofumpt provides.
-      extra-rules: true
+      extra:
+        group-params: true # Clears the "extra-rules" deprecation warning
 
+# 2. Main static analysis tools engine
 linters:
   enable:
     - copyloopvar
@@ -45,13 +47,14 @@ linters:
   exclusions:
     paths:
       - third_party
-  
-  settings:
-    gosec:
-      # Exclude certain rules if they become too noisy (e.g., G104 for unhandled errors, since errcheck handles that).
-      excludes:
-        - G115
-        - G402
-        - G404
-        - G104
-        - G304
+
+# 3. Settings for standard linters only
+linters-settings:
+  gosec:
+    # Exclude certain rules if they become too noisy
+    excludes:
+      - G115
+      - G402
+      - G404
+      - G104
+      - G304
