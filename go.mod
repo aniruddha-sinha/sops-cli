@@ -1,6 +1,6 @@
 module github.com/aniruddha-sinha/sops-cli
 
-go 1.25.9
+go 1.27.0
 
 require (
 	github.com/getsops/sops/v3 v3.13.3
