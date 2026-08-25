@@ -23,28 +23,35 @@ url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.9.pkg"
 url = "https://awscli.amazonaws.com/AWSCLIV2-2.36.9.pkg"
 
 [[tools.ggshield]]
-version = "1.49.0"
+version = "v1.53.0"
 backend = "aqua:GitGuardian/ggshield"
 
 [tools.ggshield."platforms.linux-x64"]
-checksum = "sha256:daa95b73ffcc1788490d940697f08adba9c9bacb4e64bb64ce5ce4e521fd74d8"
-url = "https://github.com/GitGuardian/ggshield/releases/download/v1.49.0/ggshield-1.49.0-x86_64-unknown-linux-gnu.tar.gz"
-url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/385603966"
+checksum = "sha256:234d1a62ea7b769695c7e5aee8f29e9d0069cd09b4e5b67493d3b529abb44e4a"
+url = "https://github.com/GitGuardian/ggshield/releases/download/v1.53.0/ggshield-1.53.0-x86_64-unknown-linux-gnu.tar.gz"
+url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/492905742"
+provenance = "github-attestations"
+
+[tools.ggshield."platforms.linux-x64-musl"]
+provenance = "github-attestations"
 
 [tools.ggshield."platforms.macos-arm64"]
-checksum = "sha256:ee49ad4b7bb7366b4e63757cdf71b48472323a927395fb3fc6e7a835f2b88109"
-url = "https://github.com/GitGuardian/ggshield/releases/download/v1.49.0/ggshield-1.49.0-arm64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/385603964"
+checksum = "sha256:09baf4277effc9965bf6affdb21a692a3491ad977e2625a742ec421e41858ab8"
+url = "https://github.com/GitGuardian/ggshield/releases/download/v1.53.0/ggshield-1.53.0-arm64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/492905714"
+provenance = "github-attestations"
 
 [tools.ggshield."platforms.macos-x64"]
-checksum = "sha256:80b925f642d7ac16bca7d7ef273e8f360d9c3e698594e775f832e96efa85adff"
-url = "https://github.com/GitGuardian/ggshield/releases/download/v1.49.0/ggshield-1.49.0-x86_64-apple-darwin.tar.gz"
-url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/385603965"
+checksum = "sha256:3d5f4714d831f78d68bf1880023aa5623cdd57735217bc7b08dcd8b372c57996"
+url = "https://github.com/GitGuardian/ggshield/releases/download/v1.53.0/ggshield-1.53.0-x86_64-apple-darwin.tar.gz"
+url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/492905741"
+provenance = "github-attestations"
 
 [tools.ggshield."platforms.windows-x64"]
-checksum = "sha256:48de7edf61cd567e2cba7bf40d476f720a4e2b525f8db924e203955c5112794b"
-url = "https://github.com/GitGuardian/ggshield/releases/download/v1.49.0/ggshield-1.49.0-x86_64-pc-windows-msvc.zip"
-url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/385603951"
+checksum = "sha256:dec89a69feb0a525e847b8bd91aebe594d2724fe09e50b00a90aef20362d7474"
+url = "https://github.com/GitGuardian/ggshield/releases/download/v1.53.0/ggshield-1.53.0-x86_64-pc-windows-msvc.zip"
+url_api = "https://api.github.com/repos/GitGuardian/ggshield/releases/assets/492905705"
+provenance = "github-attestations"
 
 [[tools.go]]
 version = "1.27.0"

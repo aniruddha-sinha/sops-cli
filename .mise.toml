@@ -2,7 +2,7 @@
 go = "1.27"
 golangci-lint = "2.13.1" # Replaces "latest" to prevent stale caching issues
 "go:github.com/spf13/cobra-cli" = "latest"
-ggshield = "latest"
+ggshield = "v1.53.0"
 gofumpt = "latest"
 hk = "1.43.0"
 pkl = "latest"
