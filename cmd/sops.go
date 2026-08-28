@@ -39,7 +39,7 @@ func newEncryptCmd() *cobra.Command {
 			}
 
 			if outFile == "" {
-				fmt.Println(encOut)
+				fmt.Print(encOut)
 				return nil
 			}
 
@@ -59,5 +59,52 @@ func newEncryptCmd() *cobra.Command {
 		}
 	}
 
+	return cmd
+}
+
+func newDecryptCmd() *cobra.Command {
+	var inFormat, outFormat, inFile, outFile string
+	cmd := &cobra.Command{
+		Use:     "decrypt",
+		Aliases: []string{"d"},
+		Short:   "decrypt encrypted JSON secrets into JSON/YAML/BINARY using PGP or KMS master key which can be read from encrypted metadata",
+		PreRunE: func(cmd *cobra.Command, args []string) error {
+			if err := sops.ValidateFilePath(inFile); err != nil {
+				return err
+			}
+
+			if err := sops.ValidateFilePath(outFile); err != nil {
+				return err
+			}
+
+			if _, err := sops.ValidateFormatAndGetStore(inFormat); err != nil {
+				return err
+			}
+
+			if _, err := sops.ValidateFormatAndGetStore(outFormat); err != nil {
+				return err
+			}
+
+			return nil
+		},
+		RunE: func(cmd *cobra.Command, args []string) error {
+			decOut, err := sops.Decrypt(inFormat, outFormat, inFile)
+			if err != nil {
+				return err
+			}
+
+			if outFile == "" {
+				fmt.Print(decOut)
+				return nil
+			}
+
+			return sops.Save(outFile, decOut)
+		},
+	}
+
+	cmd.Flags().StringVar(&inFormat, "in-format", "json", "the format of the encrypted file ")
+	cmd.Flags().StringVar(&outFormat, "out-format", "json", "the desired format of the decrypted/plaintext file")
+	cmd.Flags().StringVar(&inFile, "in", "", "the input (encrypted) file path")
+	cmd.Flags().StringVar(&outFile, "out", "", "the output file path which is plain text; defaults to stdout")
 	return cmd
 }
