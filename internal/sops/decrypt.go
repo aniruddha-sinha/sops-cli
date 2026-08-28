@@ -34,25 +34,34 @@ func Decrypt(inFormat, outFormat, inFile string) (string, error) {
 		return string(plaintext), nil
 	}
 
-	inStore, err := ValidateFormatAndGetStore(inFormat)
+	result, err := formatDecryptedData(inFormat, outFormat, &plaintext)
 	if err != nil {
 		return "", err
 	}
 
-	branches, err := inStore.LoadPlainFile(plaintext)
+	return string(*result), nil
+}
+
+func formatDecryptedData(inFormat, outFormat string, plaintext *[]byte) (*[]byte, error) {
+	inStore, err := ValidateFormatAndGetStore(inFormat)
 	if err != nil {
-		return "", fmt.Errorf("%w: %w", ErrParsingDecryptedData, err)
+		return nil, err
+	}
+
+	branches, err := inStore.LoadPlainFile(*plaintext)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrParsingDecryptedData, err)
 	}
 
 	outStore, err := ValidateFormatAndGetStore(outFormat)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	result, err := outStore.EmitPlainFile(branches)
 	if err != nil {
-		return "", fmt.Errorf("%w: %w", ErrFormattingPlainOut, err)
+		return nil, fmt.Errorf("%w: %w", ErrFormattingPlainOut, err)
 	}
 
-	return string(result), nil
+	return &result, nil
 }
