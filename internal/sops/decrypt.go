@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/getsops/sops/v3"
 	"github.com/getsops/sops/v3/aes"
@@ -15,12 +16,14 @@ var (
 	ErrRetrievingDataKey  = errors.New("error getting data key")
 	ErrDecryptingTree     = errors.New("error decrypting sops tree")
 	ErrFormattingPlainOut = errors.New("failed to format plaintext out")
+	ErrMACDecrypt         = errors.New("failed to decrypt MAC")
+	ErrMACMismatch        = errors.New("MAC mismatch: failed to verify data integrity")
 )
 
 func Decrypt(inFormat, outFormat, inFile string) (string, error) {
 	payload, err := os.ReadFile(inFile) //nolint:gosec // G304: File path is intended to be dynamically passed via CLI input variable
 	if err != nil {
-		return "", fmt.Errorf("%w, %w", ErrInFileReadError, err)
+		return "", fmt.Errorf("%w: %w", ErrInFileReadError, err)
 	}
 
 	tree, err := loadEncryptedFile(payload, inFormat)
@@ -50,7 +53,7 @@ func loadEncryptedFile(payload []byte, format string) (*sops.Tree, error) {
 
 	tree, err := store.LoadEncryptedFile(payload)
 	if err != nil {
-		return nil, fmt.Errorf("%w:%w", ErrEncryptedFileRead, err)
+		return nil, fmt.Errorf("%w: %w", ErrEncryptedFileRead, err)
 	}
 
 	return &tree, nil
@@ -62,7 +65,7 @@ func getDataKey(ksClient *keyservice.LocalClient, tree *sops.Tree) (*[]byte, err
 			ksClient,
 		}, nil)
 	if err != nil {
-		return nil, fmt.Errorf("%w:%w", ErrRetrievingDataKey, err)
+		return nil, fmt.Errorf("%w: %w", ErrRetrievingDataKey, err)
 	}
 
 	return &dataKey, nil
@@ -70,9 +73,8 @@ func getDataKey(ksClient *keyservice.LocalClient, tree *sops.Tree) (*[]byte, err
 
 func decryptAndEmit(outFormat string, dataKey *[]byte, tree *sops.Tree) ([]byte, error) {
 	cipher := aes.NewCipher()
-	_, err := tree.Decrypt(*dataKey, cipher)
-	if err != nil {
-		return nil, fmt.Errorf("%w:%w", ErrDecryptingTree, err)
+	if err := integrityCheck(tree, dataKey, cipher); err != nil {
+		return nil, err
 	}
 
 	outStore, err := ValidateFormatAndGetStore(outFormat)
@@ -82,8 +84,35 @@ func decryptAndEmit(outFormat string, dataKey *[]byte, tree *sops.Tree) ([]byte,
 
 	result, err := outStore.EmitPlainFile(tree.Branches)
 	if err != nil {
-		return nil, fmt.Errorf("%w:%w", ErrFormattingPlainOut, err)
+		return nil, fmt.Errorf("%w: %w", ErrFormattingPlainOut, err)
 	}
 
 	return result, nil
+}
+
+/** @note
+** this is to prevent secret tampering where we calculate the MAC while decryption
+** and we compare the computed MAC with the original MAC which came packaged with the
+** encrypted data
+ */
+func integrityCheck(tree *sops.Tree, dataKey *[]byte, cipher aes.Cipher) error {
+	computedMAC, err := tree.Decrypt(*dataKey, cipher)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrDecryptingTree, err)
+	}
+
+	originalMAC, err := cipher.Decrypt(
+		tree.Metadata.MessageAuthenticationCode,
+		*dataKey,
+		tree.Metadata.LastModified.Format(time.RFC3339),
+	)
+	if err != nil {
+		return fmt.Errorf("%w: %w", ErrMACDecrypt, err)
+	}
+
+	if originalMAC != computedMAC {
+		return ErrMACMismatch
+	}
+
+	return nil
 }
