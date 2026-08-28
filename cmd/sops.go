@@ -39,7 +39,7 @@ func newEncryptCmd() *cobra.Command {
 			}
 
 			if outFile == "" {
-				fmt.Println(encOut)
+				fmt.Print(encOut)
 				return nil
 			}
 
@@ -94,7 +94,7 @@ func newDecryptCmd() *cobra.Command {
 			}
 
 			if outFile == "" {
-				fmt.Println(decOut)
+				fmt.Print(decOut)
 				return nil
 			}
 
